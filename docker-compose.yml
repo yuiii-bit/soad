@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: soad_app
+    ports:
+      - "8080:80"
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db          # Trỏ đến service "db" bên dưới (không dùng 127.0.0.1)
+      - DB_PORT=5432
+      - DB_DATABASE=soad
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=kochomuonok1
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./storage:/var/www/html/storage
+
+  db:
+    image: postgres:15-alpine
+    container_name: soad_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: soad
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: kochomuonok1
+    ports:
+      - "5433:5432"        # Dùng port 5433 để tránh xung đột với PostgreSQL local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d soad"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
