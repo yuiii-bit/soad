@@ -11,6 +11,10 @@ services:
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
+      - APP_KEY=base64:iAPsst+2bNaftiHKk5Ub9IqGGdipATeUEiHss0vttSA=
+      - SESSION_DRIVER=cookie
+      - SESSION_LIFETIME=120
+      - SESSION_SECURE_COOKIE=false
       - DB_CONNECTION=pgsql
       - DB_HOST=db          # Trỏ đến service "db" bên dưới (không dùng 127.0.0.1)
       - DB_PORT=5432
@@ -21,7 +25,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./storage:/var/www/html/storage
+      - ./:/var/www/html
 
   db:
     image: postgres:15-alpine

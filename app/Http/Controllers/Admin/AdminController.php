@@ -27,12 +27,13 @@ class AdminController extends Controller
         $monthlyData = Order::where('status', 'completed')
             ->where('created_at', '>=', now()->subMonths(6))
             ->select(
-                DB::raw('MONTH(created_at) as month'),
-                DB::raw('YEAR(created_at) as year'),
+                DB::raw('EXTRACT(MONTH FROM created_at)::integer as month'),
+                DB::raw('EXTRACT(YEAR FROM created_at)::integer as year'),
                 DB::raw('SUM(total_amount) as revenue')
             )
-            ->groupBy('year', 'month')
-            ->orderBy('year')->orderBy('month')
+            ->groupBy(DB::raw('EXTRACT(YEAR FROM created_at)'), DB::raw('EXTRACT(MONTH FROM created_at)'))
+            ->orderBy(DB::raw('EXTRACT(YEAR FROM created_at)'))
+            ->orderBy(DB::raw('EXTRACT(MONTH FROM created_at)'))
             ->get();
 
         $monthly_labels   = [];

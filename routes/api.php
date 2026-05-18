@@ -38,5 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthApiController::class, 'logout']);
 
     // Đặt hàng qua API (bảo mật - chỉ ai có Token mới đặt được)
-    // Route::post('/orders', [OrderApiController::class, 'store']);
+    Route::post('/orders', [\App\Http\Controllers\Api\OrderApiController::class, 'store']);
 });
+
